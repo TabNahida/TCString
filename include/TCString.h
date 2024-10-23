@@ -1,12 +1,18 @@
 #ifndef TCSTRING_H
 #define TCSTRING_H
 
+#include <malloc.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-size_t getClosestPowerOfTwo(size_t size)
+#ifndef min
+#define min(a, b) ((a) < (b) ? (a) : (b))
+#endif
+
+static inline size_t getClosestPowerOfTwo(size_t size)
 {
     if (size <= 1)
         return 1;
@@ -29,7 +35,7 @@ typedef struct
     char *buffer;
 } TCString;
 
-inline TCString *makeTCString(const char *str)
+static inline TCString *makeTCString(const char *str)
 {
     TCString *object = malloc(sizeof(TCString));
     object->length = strlen(str);
@@ -38,7 +44,7 @@ inline TCString *makeTCString(const char *str)
     return object;
 }
 
-inline TCString *makeTCString_()
+static inline TCString *makeTCString_()
 {
     TCString *object = malloc(sizeof(TCString));
     object->length = 0;
@@ -47,7 +53,7 @@ inline TCString *makeTCString_()
     return object;
 }
 
-inline TCString *makeTCString_c(char ch)
+static inline TCString *makeTCString_c(char ch)
 {
     TCString *object = malloc(sizeof(TCString));
     object->length = 1;
@@ -57,7 +63,7 @@ inline TCString *makeTCString_c(char ch)
     return object;
 }
 
-inline TCString *makeTCString_len(const char *str, size_t len)
+static inline TCString *makeTCString_len(const char *str, size_t len)
 {
     TCString *object = malloc(sizeof(TCString));
     object->length = len;
@@ -67,7 +73,16 @@ inline TCString *makeTCString_len(const char *str, size_t len)
     return object;
 }
 
-inline TCString *makeTCString_tcstr(TCString *str)
+static inline TCString *makeTCString_capa(size_t capacity)
+{
+    TCString *object = malloc(sizeof(TCString));
+    object->length = 0;
+    object->buffer = malloc(getClosestPowerOfTwo(capacity + 1));
+    object->buffer[0] = '\0';
+    return object;
+}
+
+static inline TCString *makeTCString_tcstr(TCString *str)
 {
     TCString *object = malloc(sizeof(TCString));
     object->length = str->length;
@@ -76,7 +91,7 @@ inline TCString *makeTCString_tcstr(TCString *str)
     return object;
 }
 
-inline TCString *apndTCString(TCString *this, const char *str)
+static inline TCString *apndTCString(TCString *this, const char *str)
 {
     size_t strLength = strlen(str);
     size_t newLength = this->length + strLength;
@@ -93,7 +108,7 @@ inline TCString *apndTCString(TCString *this, const char *str)
     return this;
 }
 
-inline TCString *apndTCString_tcstr(TCString *this, TCString *str)
+static inline TCString *apndTCString_tcstr(TCString *this, TCString *str)
 {
     size_t newLength = this->length + str->length;
     size_t newCapacity = getClosestPowerOfTwo(newLength + 1);
@@ -109,90 +124,68 @@ inline TCString *apndTCString_tcstr(TCString *this, TCString *str)
     return this;
 }
 
-inline size_t bufSizeTCString(const TCString *this)
+static inline size_t bufSizeTCString(const TCString *this)
 {
     return getClosestPowerOfTwo(this->length + 1);
 }
 
-inline TCString *clrTCString(TCString *this)
+static inline TCString *clearTCString(TCString *this)
 {
-    this->length = 0;
     free(this->buffer);
+    this->length = 0;
     this->buffer = malloc(1);
     this->buffer[0] = '\0';
     return this;
 }
 
-inline TCString *freeTCString(TCString *this)
+static inline TCString *freeTCString(TCString *this)
 {
     free(this->buffer);
     free(this);
     return this;
 }
 
-inline TCString *subTCString(const TCString *this, size_t pos, size_t len)
+static inline TCString *reserveTCString(TCString *this, size_t capacity)
+{
+    free(this->buffer);
+    this->length = 0;
+    this->buffer = malloc(getClosestPowerOfTwo(this->length + 1));
+    this->buffer[0] = '\0';
+    return this;
+}
+
+static inline TCString *subTCString(const TCString *this, size_t pos, size_t len)
 {
     if (pos > this->length)
     {
         return NULL;
     }
     size_t actualLen = min(len, this->length - pos);
-    TCString *result = malloc(sizeof(TCString));
+    TCString *result = makeTCString_capa(actualLen);
     memcpy(result->buffer, this->buffer + pos, actualLen);
     result->buffer[actualLen] = '\0';
     result->length = actualLen;
     return result;
 }
 
-inline TCString *subTCString_end(const TCString *this, size_t pos)
+static inline TCString *subTCString_end(const TCString *this, size_t pos)
 {
     if (pos > this->length)
     {
         return NULL;
     }
     size_t actualLen = this->length - pos;
-    TCString *result = malloc(sizeof(TCString));
+    TCString *result = makeTCString_capa(actualLen);
     memcpy(result->buffer, this->buffer + pos, actualLen);
     result->buffer[actualLen] = '\0';
     result->length = actualLen;
     return result;
 }
 
-inline size_t findTCString(const TCString *this, const char *str)
-{
-    size_t strLength = strlen(str);
-    if (strLength == 0)
-        return 0;
-    if (this->length < strLength)
-        return -1;
-
-    const char *pos = strstr(this->buffer, str);
-    if (pos != NULL)
-    {
-        return pos - this->buffer;
-    }
-    return -1;
-}
-
-inline size_t findTCString_tcstr(const TCString *this, const TCString *str)
-{
-    if (str->length == 0)
-        return 0;
-    if (this->length < str->length)
-        return -1;
-
-    const char *pos = strstr(this->buffer, str->buffer);
-    if (pos != NULL)
-    {
-        return pos - this->buffer;
-    }
-    return -1;
-}
-
-inline uint32_t hashFNV(const void *key, size_t len)
+static inline uint32_t hashFNV(const void *key, size_t len)
 {
     uint32_t hash = 2166136261u;
-    const uint8_t *p = (const uint8_t *)key;
+    const uint8_t *p = key;
 
     for (size_t i = 0; i < len; i++)
     {
@@ -203,9 +196,9 @@ inline uint32_t hashFNV(const void *key, size_t len)
     return hash;
 }
 
-inline int32_t hashMurmur(const void *key, size_t len, uint32_t seed)
+static inline int32_t hashMurmur(const void *key, size_t len, uint32_t seed)
 {
-    const uint8_t *data = (const uint8_t *)key;
+    const uint8_t *data = key;
     const int nblocks = len / 4;
     uint32_t h1 = seed;
     uint32_t c1 = 0xcc9e2d51;
@@ -265,11 +258,11 @@ void hashMD5(void *data, size_t size, uint8_t hash[16])
 
     uint32_t r[64] = {7, 12, 17, 22, 5, 9, 14, 20, 4, 11, 16, 23, 6, 10, 15, 21};
 
-    uint8_t *input = (uint8_t *)data;
+    uint8_t *input = data;
     uint64_t bit_len = size * 8;
 
     size_t new_size = size + 1 + ((56 - (size + 1) % 64) % 64) + 8;
-    uint8_t *buffer = (uint8_t *)malloc(new_size);
+    uint8_t *buffer = malloc(new_size);
     memcpy(buffer, input, size);
     buffer[size] = 0x80;
 
