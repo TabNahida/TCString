@@ -33,11 +33,11 @@ int main()
     printTCString(str4);
 
     // Test 6: Substring
-    TCString *subStr = subTCString(str1, 7, 5);
+    substrTCString(str1, 7, 5, subStr);
     printTCString(subStr);
 
     // Test 7: Substring to the end
-    TCString *endSubStr = subTCString_end(str1, 7);
+    substrTCString_end(str1, 7, endSubStr);
     printTCString(endSubStr);
 
     // Test 8: Hash functions

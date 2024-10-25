@@ -189,6 +189,9 @@ static inline TCString *subTCString_end(const TCString *this, size_t pos)
     return result;
 }
 
+#define substrTCString(this, pos, len, name) TCString *name = subTCString(this, pos, len)
+#define substrTCString_end(this, pos, name) TCString *name = subTCString_end(this, pos)
+
 static inline uint32_t hashFNV(const void *key, size_t len)
 {
     uint32_t hash = 2166136261u;
