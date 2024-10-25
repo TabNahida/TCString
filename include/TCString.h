@@ -91,6 +91,13 @@ static inline TCString *makeTCString_tcstr(TCString *str)
     return object;
 }
 
+#define TCString(name, str) TCString *name = makeTCString(str)
+#define TCString_(name) TCString *name = makeTCString_()
+#define TCString_c(name, ch) TCString *name = makeTCString_c(ch)
+#define TCString_len(name, str, len) TCString *name = makeTCString_len(str, len)
+#define TCString_capa(name, capacity) TCString *name = makeTCString_capa(capacity)
+#define TCString_tcstr(name, tcstr) TCString *name = makeTCString_tcstr(str)
+
 static inline TCString *apndTCString(TCString *this, const char *str)
 {
     size_t strLength = strlen(str);
