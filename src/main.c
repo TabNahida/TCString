@@ -13,15 +13,15 @@ void printTCString(const TCString *str)
 int main()
 {
     // Test 1: Create TCString from a regular string
-    TCString *str1 = makeTCString("Hello, World!");
+    TCString(str1, "Hello, World!");
     printTCString(str1);
 
     // Test 2: Create empty TCString
-    TCString *str2 = makeTCString_();
+    TCString_(str2);
     printTCString(str2);
 
     // Test 3: Create TCString from a single character
-    TCString *str3 = makeTCString_c('A');
+    TCString_c(str3, 'A');
     printTCString(str3);
 
     // Test 4: Append to TCString
@@ -29,7 +29,7 @@ int main()
     printTCString(str1);
 
     // Test 5: Create TCString from a length-limited substring
-    TCString *str4 = makeTCString_len("Substring Test", 9);
+    TCString_len(str4, "Substring Test", 9);
     printTCString(str4);
 
     // Test 6: Substring
