@@ -6,7 +6,7 @@ void printTCString(const TCString *str)
 {
     if (str)
     {
-        printf("String: %s, Length: %zu, Buffer Size: %zu\n", str->buffer, str->length, bufSizeTCString(str));
+        printf("String: %s, Length: %zu, Buffer Size: %zu\n", str->buffer, str->length, bufferSizeTCString(str));
     }
 }
 
