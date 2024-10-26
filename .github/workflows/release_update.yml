@@ -1,0 +1,76 @@
+name: Update Version in repo-xmake
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  update-version:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout TCString repository
+      uses: actions/checkout@v3
+
+    - name: Extract Version Tag
+      id: get_version
+      run: echo "VERSION=${GITHUB_REF##*/}" >> $GITHUB_ENV
+
+    - name: Download Release Tarball
+      run: |
+        VERSION=${{ env.VERSION }}
+        curl -L -o TCString-${VERSION}.tar.gz https://github.com/TabNahida/TCString/archive/refs/tags/${VERSION}.tar.gz
+
+    - name: Calculate SHA256 Checksum
+      id: get_checksum
+      run: |
+        CHECKSUM=$(sha256sum TCString-${{ env.VERSION }}.tar.gz | awk '{ print $1 }')
+        echo "CHECKSUM=$CHECKSUM" >> $GITHUB_ENV
+
+    - name: Clone repo-xmake repository
+      uses: actions/checkout@v3
+      with:
+        repository: TabNahida/repo-xmake
+        path: repo-xmake
+        token: ${{ secrets.REPO_XMAKE_PAT }}
+
+    - name: Update xmake.lua
+      run: |
+        VERSION=${{ env.VERSION }}
+        CHECKSUM=${{ env.CHECKSUM }}
+        FILE_PATH="repo-xmake/packages/t/tcstring/xmake.lua"
+        awk -v version="${VERSION}" -v checksum="${CHECKSUM}" '
+        {
+            # 检查是否已经添加了这个版本
+            if ($0 ~ "add_versions\\(\"" version "\"") {
+                found = 1
+            }
+            
+            # 记录当前行
+            lines[NR] = $0
+            if (/add_versions/) {
+                last_version_line = NR
+            }
+        }
+        
+        END {
+            # 打印所有行
+            for (i = 1; i <= NR; i++) {
+                print lines[i]
+                # 在最后一个 add_versions 之后插入新版本
+                if (i == last_version_line) {
+                    if (!found) {
+                        print "    add_versions(\"" version "\", \"" checksum "\")"
+                    }
+                }
+            }
+        }' $FILE_PATH > tmp && mv tmp $FILE_PATH
+
+    - name: Commit and Push Changes
+      run: |
+        cd repo-xmake
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add packages/t/tcstring/xmake.lua
+        git commit -m "Update TCString version to ${VERSION}"
+        git push
