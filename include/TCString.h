@@ -131,7 +131,7 @@ static inline TCString *appendTCString_tcstr(TCString *this, TCString *str)
     return this;
 }
 
-static inline size_t bufSizeTCString(const TCString *this)
+static inline size_t bufferSizeTCString(const TCString *this)
 {
     return getClosestPowerOfTwo(this->length + 1);
 }
