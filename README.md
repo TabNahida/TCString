@@ -55,7 +55,7 @@ target("example")
 
 int main() {
     TCString *myStr = makeTCString("Hello, ");
-    apndTCString(myStr, "World!");
+    appendTCString(myStr, "World!");
     printf("%s\n", myStr->buffer);  // Output: Hello, World!
 
     TCString *subStr = subTCString(myStr, 0, 5);

@@ -25,7 +25,7 @@ int main()
     printTCString(str3);
 
     // Test 4: Append to TCString
-    apndTCString(str1, " Welcome to TCString!");
+    appendTCString(str1, " Welcome to TCString!");
     printTCString(str1);
 
     // Test 5: Create TCString from a length-limited substring

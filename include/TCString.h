@@ -98,7 +98,7 @@ static inline TCString *makeTCString_tcstr(TCString *str)
 #define TCString_capa(name, capacity) TCString *name = makeTCString_capa(capacity)
 #define TCString_tcstr(name, tcstr) TCString *name = makeTCString_tcstr(str)
 
-static inline TCString *apndTCString(TCString *this, const char *str)
+static inline TCString *appendTCString(TCString *this, const char *str)
 {
     size_t strLength = strlen(str);
     size_t newLength = this->length + strLength;
@@ -115,7 +115,7 @@ static inline TCString *apndTCString(TCString *this, const char *str)
     return this;
 }
 
-static inline TCString *apndTCString_tcstr(TCString *this, TCString *str)
+static inline TCString *appendTCString_tcstr(TCString *this, TCString *str)
 {
     size_t newLength = this->length + str->length;
     size_t newCapacity = getClosestPowerOfTwo(newLength + 1);
