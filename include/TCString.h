@@ -98,99 +98,99 @@ static inline TCString *makeTCString_tcstr(TCString *str)
 #define TCString_capa(name, capacity) TCString *name = makeTCString_capa(capacity)
 #define TCString_tcstr(name, tcstr) TCString *name = makeTCString_tcstr(str)
 
-static inline TCString *appendTCString(TCString *this, const char *str)
+static inline TCString *appendTCString(TCString *this_, const char *str)
 {
     size_t strLength = strlen(str);
-    size_t newLength = this->length + strLength;
+    size_t newLength = this_->length + strLength;
     size_t newCapacity = getClosestPowerOfTwo(newLength + 1);
-    if (newCapacity > getClosestPowerOfTwo(this->length + 1))
+    if (newCapacity > getClosestPowerOfTwo(this_->length + 1))
     {
         char *newBuffer = (char *)malloc(newCapacity);
-        memcpy(newBuffer, this->buffer, this->length);
-        free(this->buffer);
-        this->buffer = newBuffer;
+        memcpy(newBuffer, this_->buffer, this_->length);
+        free(this_->buffer);
+        this_->buffer = newBuffer;
     }
-    memcpy(this->buffer + this->length, str, strLength + 1);
-    this->length = newLength;
-    return this;
+    memcpy(this_->buffer + this_->length, str, strLength + 1);
+    this_->length = newLength;
+    return this_;
 }
 
-static inline TCString *appendTCString_tcstr(TCString *this, TCString *str)
+static inline TCString *appendTCString_tcstr(TCString *this_, TCString *str)
 {
-    size_t newLength = this->length + str->length;
+    size_t newLength = this_->length + str->length;
     size_t newCapacity = getClosestPowerOfTwo(newLength + 1);
-    if (newCapacity > getClosestPowerOfTwo(this->length + 1))
+    if (newCapacity > getClosestPowerOfTwo(this_->length + 1))
     {
         char *newBuffer = (char *)malloc(newCapacity);
-        memcpy(newBuffer, this->buffer, this->length);
-        free(this->buffer);
-        this->buffer = newBuffer;
+        memcpy(newBuffer, this_->buffer, this_->length);
+        free(this_->buffer);
+        this_->buffer = newBuffer;
     }
-    memcpy(this->buffer + this->length, str->buffer, str->length + 1);
-    this->length = newLength;
-    return this;
+    memcpy(this_->buffer + this_->length, str->buffer, str->length + 1);
+    this_->length = newLength;
+    return this_;
 }
 
-static inline size_t bufferSizeTCString(const TCString *this)
+static inline size_t bufferSizeTCString(const TCString *this_)
 {
-    return getClosestPowerOfTwo(this->length + 1);
+    return getClosestPowerOfTwo(this_->length + 1);
 }
 
-static inline TCString *clearTCString(TCString *this)
+static inline TCString *clearTCString(TCString *this_)
 {
-    free(this->buffer);
-    this->length = 0;
-    this->buffer = (char *)malloc(1);
-    this->buffer[0] = '\0';
-    return this;
+    free(this_->buffer);
+    this_->length = 0;
+    this_->buffer = (char *)malloc(1);
+    this_->buffer[0] = '\0';
+    return this_;
 }
 
-static inline TCString *freeTCString(TCString *this)
+static inline TCString *freeTCString(TCString *this_)
 {
-    free(this->buffer);
-    free(this);
-    return this;
+    free(this_->buffer);
+    free(this_);
+    return this_;
 }
 
-static inline TCString *reserveTCString(TCString *this, size_t capacity)
+static inline TCString *reserveTCString(TCString *this_, size_t capacity)
 {
-    free(this->buffer);
-    this->length = 0;
-    this->buffer = (char *)malloc(getClosestPowerOfTwo(this->length + 1));
-    this->buffer[0] = '\0';
-    return this;
+    free(this_->buffer);
+    this_->length = 0;
+    this_->buffer = (char *)malloc(getClosestPowerOfTwo(this_->length + 1));
+    this_->buffer[0] = '\0';
+    return this_;
 }
 
-static inline TCString *subTCString(const TCString *this, size_t pos, size_t len)
+static inline TCString *subTCString(const TCString *this_, size_t pos, size_t len)
 {
-    if (pos > this->length)
+    if (pos > this_->length)
     {
         return NULL;
     }
-    size_t actualLen = min(len, this->length - pos);
+    size_t actualLen = min(len, this_->length - pos);
     TCString *result = makeTCString_capa(actualLen);
-    memcpy(result->buffer, this->buffer + pos, actualLen);
+    memcpy(result->buffer, this_->buffer + pos, actualLen);
     result->buffer[actualLen] = '\0';
     result->length = actualLen;
     return result;
 }
 
-static inline TCString *subTCString_end(const TCString *this, size_t pos)
+static inline TCString *subTCString_end(const TCString *this_, size_t pos)
 {
-    if (pos > this->length)
+    if (pos > this_->length)
     {
         return NULL;
     }
-    size_t actualLen = this->length - pos;
+    size_t actualLen = this_->length - pos;
     TCString *result = makeTCString_capa(actualLen);
-    memcpy(result->buffer, this->buffer + pos, actualLen);
+    memcpy(result->buffer, this_->buffer + pos, actualLen);
     result->buffer[actualLen] = '\0';
     result->length = actualLen;
     return result;
 }
 
-#define substrTCString(this, pos, len, name) TCString *name = subTCString(this, pos, len)
-#define substrTCString_end(this, pos, name) TCString *name = subTCString_end(this, pos)
+#define substrTCString(this_, pos, len, name) TCString *name = subTCString(this_, pos, len)
+#define substrTCString_end(this_, pos, name) TCString *name = subTCString_end(this_, pos)
 
 static inline uint32_t hashFNV(const void *key, size_t len)
 {
