@@ -195,7 +195,7 @@ static inline TCString *subTCString_end(const TCString *this_, size_t pos)
 static inline uint32_t hashFNV(const void *key, size_t len)
 {
     uint32_t hash = 2166136261u;
-    const uint8_t *p = key;
+    const uint8_t *p = (uint8_t *)key;
 
     for (size_t i = 0; i < len; i++)
     {
@@ -208,7 +208,7 @@ static inline uint32_t hashFNV(const void *key, size_t len)
 
 static inline int32_t hashMurmur(const void *key, size_t len, uint32_t seed)
 {
-    const uint8_t *data = key;
+    const uint8_t *data = (uint8_t *)key;
     const int nblocks = len / 4;
     uint32_t h1 = seed;
     uint32_t c1 = 0xcc9e2d51;
@@ -268,7 +268,7 @@ void hashMD5(void *data, size_t size, uint8_t hash[16])
 
     uint32_t r[64] = {7, 12, 17, 22, 5, 9, 14, 20, 4, 11, 16, 23, 6, 10, 15, 21};
 
-    uint8_t *input = data;
+    uint8_t *input = (uint8_t)data;
     uint64_t bit_len = size * 8;
 
     size_t new_size = size + 1 + ((56 - (size + 1) % 64) % 64) + 8;
