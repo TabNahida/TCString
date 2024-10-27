@@ -37,27 +37,27 @@ typedef struct
 
 static inline TCString *makeTCString(const char *str)
 {
-    TCString *object = malloc(sizeof(TCString));
+    TCString *object = (TCString *)malloc(sizeof(TCString));
     object->length = strlen(str);
-    object->buffer = malloc(getClosestPowerOfTwo(object->length + 1));
+    object->buffer = (char *)malloc(getClosestPowerOfTwo(object->length + 1));
     memcpy(object->buffer, str, object->length + 1);
     return object;
 }
 
 static inline TCString *makeTCString_()
 {
-    TCString *object = malloc(sizeof(TCString));
+    TCString *object = (TCString *)malloc(sizeof(TCString));
     object->length = 0;
-    object->buffer = malloc(1);
+    object->buffer = (char *)malloc(1);
     object->buffer[0] = '\0';
     return object;
 }
 
 static inline TCString *makeTCString_c(char ch)
 {
-    TCString *object = malloc(sizeof(TCString));
+    TCString *object = (TCString *)malloc(sizeof(TCString));
     object->length = 1;
-    object->buffer = malloc(getClosestPowerOfTwo(object->length + 1));
+    object->buffer = (char *)malloc(getClosestPowerOfTwo(object->length + 1));
     object->buffer[0] = ch;
     object->buffer[1] = '\0';
     return object;
@@ -65,9 +65,9 @@ static inline TCString *makeTCString_c(char ch)
 
 static inline TCString *makeTCString_len(const char *str, size_t len)
 {
-    TCString *object = malloc(sizeof(TCString));
+    TCString *object = (TCString *)malloc(sizeof(TCString));
     object->length = len;
-    object->buffer = malloc(getClosestPowerOfTwo(object->length + 1));
+    object->buffer = (char *)malloc(getClosestPowerOfTwo(object->length + 1));
     memcpy(object->buffer, str, object->length);
     object->buffer[object->length] = '\0';
     return object;
@@ -75,18 +75,18 @@ static inline TCString *makeTCString_len(const char *str, size_t len)
 
 static inline TCString *makeTCString_capa(size_t capacity)
 {
-    TCString *object = malloc(sizeof(TCString));
+    TCString *object = (TCString *)malloc(sizeof(TCString));
     object->length = 0;
-    object->buffer = malloc(getClosestPowerOfTwo(capacity + 1));
+    object->buffer = (char *)malloc(getClosestPowerOfTwo(capacity + 1));
     object->buffer[0] = '\0';
     return object;
 }
 
 static inline TCString *makeTCString_tcstr(TCString *str)
 {
-    TCString *object = malloc(sizeof(TCString));
+    TCString *object = (TCString *)malloc(sizeof(TCString));
     object->length = str->length;
-    object->buffer = malloc(getClosestPowerOfTwo(object->length + 1));
+    object->buffer = (char *)malloc(getClosestPowerOfTwo(object->length + 1));
     memcpy(object->buffer, str, object->length + 1);
     return object;
 }
@@ -105,7 +105,7 @@ static inline TCString *appendTCString(TCString *this, const char *str)
     size_t newCapacity = getClosestPowerOfTwo(newLength + 1);
     if (newCapacity > getClosestPowerOfTwo(this->length + 1))
     {
-        char *newBuffer = malloc(newCapacity);
+        char *newBuffer = (char *)malloc(newCapacity);
         memcpy(newBuffer, this->buffer, this->length);
         free(this->buffer);
         this->buffer = newBuffer;
@@ -121,7 +121,7 @@ static inline TCString *appendTCString_tcstr(TCString *this, TCString *str)
     size_t newCapacity = getClosestPowerOfTwo(newLength + 1);
     if (newCapacity > getClosestPowerOfTwo(this->length + 1))
     {
-        char *newBuffer = malloc(newCapacity);
+        char *newBuffer = (char *)malloc(newCapacity);
         memcpy(newBuffer, this->buffer, this->length);
         free(this->buffer);
         this->buffer = newBuffer;
@@ -140,7 +140,7 @@ static inline TCString *clearTCString(TCString *this)
 {
     free(this->buffer);
     this->length = 0;
-    this->buffer = malloc(1);
+    this->buffer = (char *)malloc(1);
     this->buffer[0] = '\0';
     return this;
 }
@@ -156,7 +156,7 @@ static inline TCString *reserveTCString(TCString *this, size_t capacity)
 {
     free(this->buffer);
     this->length = 0;
-    this->buffer = malloc(getClosestPowerOfTwo(this->length + 1));
+    this->buffer = (char *)malloc(getClosestPowerOfTwo(this->length + 1));
     this->buffer[0] = '\0';
     return this;
 }
@@ -272,7 +272,7 @@ void hashMD5(void *data, size_t size, uint8_t hash[16])
     uint64_t bit_len = size * 8;
 
     size_t new_size = size + 1 + ((56 - (size + 1) % 64) % 64) + 8;
-    uint8_t *buffer = malloc(new_size);
+    uint8_t *buffer = (char *)malloc(new_size);
     memcpy(buffer, input, size);
     buffer[size] = 0x80;
 
