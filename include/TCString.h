@@ -268,7 +268,7 @@ void hashMD5(void *data, size_t size, uint8_t hash[16])
 
     uint32_t r[64] = {7, 12, 17, 22, 5, 9, 14, 20, 4, 11, 16, 23, 6, 10, 15, 21};
 
-    uint8_t *input = (uint8_t)data;
+    uint8_t *input = (uint8_t *)data;
     uint64_t bit_len = size * 8;
 
     size_t new_size = size + 1 + ((56 - (size + 1) % 64) % 64) + 8;
