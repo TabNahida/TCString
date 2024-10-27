@@ -272,7 +272,7 @@ void hashMD5(void *data, size_t size, uint8_t hash[16])
     uint64_t bit_len = size * 8;
 
     size_t new_size = size + 1 + ((56 - (size + 1) % 64) % 64) + 8;
-    uint8_t *buffer = (char *)malloc(new_size);
+    uint8_t *buffer = (uint8_t *)malloc(new_size);
     memcpy(buffer, input, size);
     buffer[size] = 0x80;
 
