@@ -206,7 +206,7 @@ static inline uint32_t hashFNV(const void *key, size_t len)
     return hash;
 }
 
-static inline int32_t hashMurmur(const void *key, size_t len, uint32_t seed)
+static inline uint32_t hashMurmur(const void *key, size_t len, uint32_t seed)
 {
     const uint8_t *data = (uint8_t *)key;
     const int nblocks = len / 4;
@@ -253,7 +253,7 @@ static inline int32_t hashMurmur(const void *key, size_t len, uint32_t seed)
     return h1;
 }
 
-void hashMD5(void *data, size_t size, uint8_t hash[16])
+static inline void hashMD5(void *data, size_t size, uint8_t hash[16])
 {
     uint32_t s[4] = {0x67452301, 0xEFCDAB89, 0x98BADCFE, 0x10325476};
     uint32_t k[64] = {
